@@ -1,0 +1,8 @@
+# A3 Optimization Agent — 问题 1 求解所需的最小依赖
+# 仅列必要依赖，不使用 `pip freeze` 全量导出。
+pandas
+numpy
+openpyxl
+pulp
+highspy
+pytest

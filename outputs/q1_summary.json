@@ -1,0 +1,171 @@
+{
+  "status": "OPTIMAL",
+  "solver": "PULP_HiGHS (HiGHS)",
+  "solver_version": "HiGHS 1.15.1",
+  "solver_status": "Optimal",
+  "solver_versions": {
+    "primary": "PULP_HiGHS / HiGHS 1.15.1",
+    "cbc_crosscheck": "COIN-OR CBC Version: 2.10.3",
+    "pulp": "3.3.2"
+  },
+  "crosscheck_cbc": {
+    "solver": "PULP_CBC_CMD (COIN-OR CBC)",
+    "status": "Optimal",
+    "objective_cost_yuan": 35126.948591235,
+    "objective_abs_diff_yuan": 1.9453655113466084e-06,
+    "objective_rel_diff": 5.538099918931641e-11
+  },
+  "pulp_version": "3.3.2",
+  "objective_cost_yuan": 35126.948589289634,
+  "total_grid_energy_kwh": 59482.69899835391,
+  "total_charge_energy_kwh": 20740.666131687245,
+  "total_discharge_energy_kwh": 16799.939566666668,
+  "total_pv_available_kwh": 55482.835666666666,
+  "total_pv_used_kwh": 55482.835666666666,
+  "total_curtailment_kwh": 0.0,
+  "initial_energy_kwh": 6000.0,
+  "final_energy_kwh": 6000.0,
+  "min_energy_kwh": 1200.0,
+  "max_energy_kwh": 10800.0,
+  "max_charge_kw": 5000.0,
+  "max_discharge_kw": 4293.9182,
+  "max_grid_kw": 8458.8273,
+  "max_power_balance_residual_kw": 9.094947017729282e-13,
+  "max_energy_recursion_residual_kwh": 4.547473508864641e-13,
+  "terminal_energy_error_kwh": 0.0,
+  "simultaneous_charge_discharge_count": 0,
+  "max_simultaneous_kw": 0.0,
+  "secondary_optimization_used": false,
+  "secondary_optimization": {
+    "triggered": false
+  },
+  "objective_recomputed_yuan": 35126.948589289634,
+  "objective_abs_diff_yuan": 0.0,
+  "min_grid_kw_raw": 0.0,
+  "negative_grid_raw_count": 0,
+  "simultaneous_model_t": [],
+  "tolerances": {
+    "residual_tol": 1e-06,
+    "simultaneous_tol": 1e-06,
+    "objective_tol": 1e-06,
+    "clamp_tol": 1e-09
+  },
+  "delta_t_hours": 0.16666666666666666,
+  "n_periods": 144,
+  "mapping": "Mapping A (source label = interval end); RIGHT_ENDPOINT",
+  "validation_checks": {
+    "power_balance": true,
+    "energy_recursion": true,
+    "energy_bounds": true,
+    "initial_energy": true,
+    "terminal_energy": true,
+    "charge_bounds": true,
+    "discharge_bounds": true,
+    "pv_bounds": true,
+    "curtailment_nonneg": true,
+    "grid_nonneg": true,
+    "objective_recompute": true
+  },
+  "validation_all_pass": true,
+  "baseline_no_storage": {
+    "baseline_cost_yuan": 48052.046590846665,
+    "total_baseline_grid_energy_kwh": 61789.935399999995,
+    "optimized_cost_yuan": 35126.948589289634,
+    "saving_yuan": 12925.098001557031,
+    "saving_rate": 0.26898121762870153
+  },
+  "blocks_4h": [
+    {
+      "block": "00:00-04:00",
+      "model_t_start": 1,
+      "model_t_end": 24,
+      "charge_kwh_sum": 4500.0,
+      "discharge_kwh_sum": 0.0,
+      "grid_kwh_sum": 18487.106183333333
+    },
+    {
+      "block": "04:00-08:00",
+      "model_t_start": 25,
+      "model_t_end": 48,
+      "charge_kwh_sum": 833.3333333333333,
+      "discharge_kwh_sum": 6365.8412,
+      "grid_kwh_sum": 7302.749566666666
+    },
+    {
+      "block": "08:00-12:00",
+      "model_t_start": 49,
+      "model_t_end": 72,
+      "charge_kwh_sum": 4787.964288065849,
+      "discharge_kwh_sum": 1702.9969833333334,
+      "grid_kwh_sum": 1760.9755047325157
+    },
+    {
+      "block": "12:00-16:00",
+      "model_t_start": 73,
+      "model_t_end": 96,
+      "charge_kwh_sum": 5286.0351769547315,
+      "discharge_kwh_sum": 91.10138333333344,
+      "grid_kwh_sum": 3809.993860288065
+    },
+    {
+      "block": "16:00-20:00",
+      "model_t_start": 97,
+      "model_t_end": 120,
+      "charge_kwh_sum": 0.0,
+      "discharge_kwh_sum": 5780.131883333333,
+      "grid_kwh_sum": 10419.526716666665
+    },
+    {
+      "block": "20:00-24:00",
+      "model_t_start": 121,
+      "model_t_end": 144,
+      "charge_kwh_sum": 5333.333333333333,
+      "discharge_kwh_sum": 2859.8681166666665,
+      "grid_kwh_sum": 17702.347166666666
+    }
+  ],
+  "key_intervals": [
+    {
+      "model_t": 61,
+      "physical_interval": "10:00-10:10",
+      "expected_interval": "10:00-10:10",
+      "grid_kw": 0.0,
+      "grid_kwh": 0.0
+    },
+    {
+      "model_t": 73,
+      "physical_interval": "12:00-12:10",
+      "expected_interval": "12:00-12:10",
+      "grid_kw": 2882.4746999999998,
+      "grid_kwh": 480.4124499999999
+    },
+    {
+      "model_t": 85,
+      "physical_interval": "14:00-14:10",
+      "expected_interval": "14:00-14:10",
+      "grid_kw": 0.0,
+      "grid_kwh": 0.0
+    },
+    {
+      "model_t": 97,
+      "physical_interval": "16:00-16:10",
+      "expected_interval": "16:00-16:10",
+      "grid_kw": 2672.5899000000004,
+      "grid_kwh": 445.43165000000005
+    },
+    {
+      "model_t": 109,
+      "physical_interval": "18:00-18:10",
+      "expected_interval": "18:00-18:10",
+      "grid_kw": 3191.3642999999993,
+      "grid_kwh": 531.8940499999999
+    },
+    {
+      "model_t": 121,
+      "physical_interval": "20:00-20:10",
+      "expected_interval": "20:00-20:10",
+      "grid_kw": 0.0,
+      "grid_kwh": 0.0
+    }
+  ]
+}
