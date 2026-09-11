@@ -37,6 +37,8 @@ from src.model_q1 import (  # noqa: E402
     E_INIT,
     E_MAX,
     E_MIN,
+    ETA_CH,
+    ETA_DIS,
     N_PERIODS,
     P_CH_MAX,
     P_DIS_MAX,
@@ -307,7 +309,11 @@ def extract_solution(df: pd.DataFrame, bundle) -> dict[str, list[float]]:
 # ==========================================================================
 # 3. 内部验证（A3 §21–§31、§26–§28）
 # ==========================================================================
-def run_validation(df: pd.DataFrame, sol: dict[str, list[float]], solver_objective: float) -> dict[str, Any]:
+def run_validation(
+    df: pd.DataFrame, sol: dict[str, list[float]], solver_objective: float,
+    *, eta_ch: float = ETA_CH, eta_dis: float = ETA_DIS,
+) -> dict[str, Any]:
+    """复算物理约束；自定义场景须传入 ModelBundle 的实际效率。"""
     intervals = df["physical_interval"].astype(str).tolist()
     loads, pv = sol["loads"], sol["pv"]
     grid, pv_use, ch, dis, energy = sol["grid"], sol["pv_use"], sol["ch"], sol["dis"], sol["energy"]
@@ -321,7 +327,7 @@ def run_validation(df: pd.DataFrame, sol: dict[str, list[float]], solver_objecti
     # §22 储能递推独立复算
     rec_res = []
     for t in range(N_PERIODS):
-        expected = energy[t] + 0.9 * ch[t] * DELTA_T - (dis[t] / 0.9) * DELTA_T
+        expected = energy[t] + eta_ch * ch[t] * DELTA_T - (dis[t] / eta_dis) * DELTA_T
         rec_res.append(energy[t + 1] - expected)
     max_abs_rec = max(abs(r) for r in rec_res)
 
@@ -484,9 +490,13 @@ def write_outputs(
     solution_df: pd.DataFrame,
     summary: dict[str, Any],
     baseline: dict[str, Any],
+    *, output_dir: Path | None = None,
 ) -> None:
-    OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
-    solution_df.to_csv(OUT_CSV, index=False, encoding="utf-8-sig")
+    csv_path = OUT_CSV if output_dir is None else output_dir / OUT_CSV.name
+    xlsx_path = OUT_XLSX if output_dir is None else output_dir / OUT_XLSX.name
+    json_path = OUT_JSON if output_dir is None else output_dir / OUT_JSON.name
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
+    solution_df.to_csv(csv_path, index=False, encoding="utf-8-sig")
 
     # Excel：solution + summary 两个 sheet（内部检查用，非官方 result1.xlsx）
     summary_rows = [
@@ -521,20 +531,21 @@ def write_outputs(
     blocks_df = pd.DataFrame(summary["blocks_4h"])
     key_df = pd.DataFrame(summary["key_intervals"])
 
-    with pd.ExcelWriter(OUT_XLSX, engine="openpyxl") as writer:
+    with pd.ExcelWriter(xlsx_path, engine="openpyxl") as writer:
         solution_df.to_excel(writer, sheet_name="solution", index=False)
         summary_df.to_excel(writer, sheet_name="summary", index=False)
         blocks_df.to_excel(writer, sheet_name="blocks_4h", index=False)
         key_df.to_excel(writer, sheet_name="key_intervals", index=False)
 
-    with open(OUT_JSON, "w", encoding="utf-8") as f:
+    with open(json_path, "w", encoding="utf-8") as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
 
 
 # ==========================================================================
 # 6. 主流程
 # ==========================================================================
-def run(print_summary: bool = True) -> dict[str, Any]:
+def run(print_summary: bool = True, *, representative_optimum: bool = False) -> dict[str, Any]:
+    """默认保留 A3 路径；可选代表解只写 outputs/representative_optimum/。"""
     # --- Gate ---
     check_time_mapping_gate()
     check_a2_gate()
@@ -551,7 +562,7 @@ def run(print_summary: bool = True) -> dict[str, Any]:
     throughput_stage1 = float(pulp.value(bundle.throughput_expr))
 
     sol = extract_solution(df, bundle)
-    validation = run_validation(df, sol, c_star)
+    validation = run_validation(df, sol, c_star, eta_ch=bundle.eta_ch, eta_dis=bundle.eta_dis)
 
     # --- 独立求解器交叉校验（CBC）---
     crosscheck = crosscheck_with_cbc(prices, loads, pv)
@@ -563,10 +574,10 @@ def run(print_summary: bool = True) -> dict[str, Any]:
             crosscheck["objective_abs_diff_yuan"] / abs(c_star) if c_star else 0.0
         )
 
-    # --- Stage 2（仅当出现显著同时充放电，A3 §31 方案 B） ---
+    # --- Stage 2（同时充放电触发，或显式请求代表解；默认路径不变） ---
     secondary_used = False
     secondary_info: dict[str, Any] = {"triggered": False}
-    if validation["simultaneous_charge_discharge_count"] > 0:
+    if representative_optimum or validation["simultaneous_charge_discharge_count"] > 0:
         secondary_info = {
             "triggered": True,
             "method": "two_stage_min_throughput (model_spec §7 方案 B)",
@@ -578,7 +589,7 @@ def run(print_summary: bool = True) -> dict[str, Any]:
         solver_status, solver_name = solve_stage(bundle, stage_label="stage2")
         c_second = float(pulp.value(bundle.cost_expr))
         throughput_stage2 = float(pulp.value(bundle.throughput_expr))
-        if abs(c_second - c_star) > max(EPS_COST, 1e-3):
+        if abs(c_second - c_star) > EPS_COST + 1e-8:
             raise RuntimeError(
                 f"第二阶段购电费用 {c_second} 偏离第一阶段 {c_star}，超出容差，按 A3 §31 停止。"
             )
@@ -590,7 +601,7 @@ def run(print_summary: bool = True) -> dict[str, Any]:
         })
         # 重新提取与验证
         sol = extract_solution(df, bundle)
-        validation = run_validation(df, sol, c_star)
+        validation = run_validation(df, sol, c_second, eta_ch=bundle.eta_ch, eta_dis=bundle.eta_dis)
         secondary_used = True
         if validation["simultaneous_charge_discharge_count"] > 0:
             raise RuntimeError("第二阶段后仍存在同时充放电，需按 A3 §31 进一步处理（升级 MILP）。")
@@ -605,7 +616,8 @@ def run(print_summary: bool = True) -> dict[str, Any]:
 
     baseline = compute_baseline(df)
     baseline_cost = baseline["baseline_cost_yuan"]
-    saving = baseline_cost - c_star
+    final_cost = float(pulp.value(bundle.cost_expr))
+    saving = baseline_cost - final_cost
     saving_rate = saving / baseline_cost if baseline_cost != 0 else 0.0
 
     blocks = build_blocks(sol)
@@ -623,7 +635,7 @@ def run(print_summary: bool = True) -> dict[str, Any]:
         },
         "crosscheck_cbc": crosscheck,
         "pulp_version": pulp.__version__,
-        "objective_cost_yuan": c_star,
+        "objective_cost_yuan": final_cost,
         "total_grid_energy_kwh": total_grid,
         "total_charge_energy_kwh": total_charge,
         "total_discharge_energy_kwh": total_discharge,
@@ -658,7 +670,7 @@ def run(print_summary: bool = True) -> dict[str, Any]:
         "baseline_no_storage": {
             "baseline_cost_yuan": baseline_cost,
             "total_baseline_grid_energy_kwh": baseline["total_baseline_grid_energy_kwh"],
-            "optimized_cost_yuan": c_star,
+            "optimized_cost_yuan": final_cost,
             "saving_yuan": saving,
             "saving_rate": saving_rate,
         },
@@ -667,13 +679,18 @@ def run(print_summary: bool = True) -> dict[str, Any]:
     }
 
     solution_df = build_solution_dataframe(df, sol)
-    write_outputs(solution_df, summary, baseline)
+    if not validation["all_checks_pass"]:
+        raise RuntimeError(f"A3 内部验证未全部通过: {validation['checks']}")
+    if representative_optimum:
+        summary["representative_optimum"] = True
+        summary["secondary_optimization"]["trigger_reason"] = "representative_optimum requested"
+    write_outputs(
+        solution_df, summary, baseline,
+        output_dir=REPO_ROOT / "outputs" / "representative_optimum" if representative_optimum else None,
+    )
 
     if print_summary:
         _print_summary(summary, solution_df)
-
-    if not validation["all_checks_pass"]:
-        raise RuntimeError(f"A3 内部验证未全部通过: {validation['checks']}")
 
     return summary
 
@@ -714,8 +731,13 @@ def _print_summary(summary: dict[str, Any], solution_df: pd.DataFrame) -> None:
 
 
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--representative-optimum", action="store_true")
+    args = parser.parse_args()
     try:
-        run()
+        run(representative_optimum=args.representative_optimum)
     except (GateError, RuntimeError) as exc:
         print(f"\nA3 STATUS: FAIL / BLOCKED\nReason: {exc}")
         sys.exit(1)

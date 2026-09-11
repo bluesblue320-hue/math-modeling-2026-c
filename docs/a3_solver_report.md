@@ -194,3 +194,11 @@ A3 STATUS: PASS
 ---
 
 *本报告基于 2026-09-11 在共享仓库中实跑结果撰写；未修改任何 Source of Truth，未生成官方 `result1.xlsx`，未处理问题 2/3/4。*
+
+## 工程补充（2026-09-11）
+
+上述为原 A3 运行记录，主结果继续保留。得到的是一组最优日前调度方案；A4 已观测到相同最优费用下不同的逐时段轨迹，不能声称唯一最优调度。
+
+`build_model` 新增默认 `ETA_CH/ETA_DIS` 的关键字效率参数，validation 使用对应模型参数。敏感性分析独立输出，见 `q1_efficiency_sensitivity.md`。可选 `python src/solve_q1.py --representative-optimum` 在费用容差内最小化吞吐量，只写 `outputs/representative_optimum/`，不覆盖本报告主结果。吞吐量相同的调度仍可能不唯一，不保证更少切换。
+
+正式导出使用 `python src/export_result1.py`，从官方模板复制生成 `outputs/result1.xlsx`，按时间映射决策第 3.3 节显式修正 144 个标签。另将主求解结果写盘闸门前移至 validation 通过之后，修复 A4 原 M2 所述失败时仍写结果的问题。

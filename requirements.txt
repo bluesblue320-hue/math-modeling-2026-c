@@ -2,6 +2,7 @@
 # 仅列必要依赖，不使用 `pip freeze` 全量导出。
 pandas
 numpy
+scipy
 openpyxl
 pulp
 highspy

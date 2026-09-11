@@ -29,6 +29,7 @@ A3 Optimization Agent — Problem 1 确定性 LP 模型定义。
 from __future__ import annotations
 
 from dataclasses import dataclass
+from math import isfinite
 from typing import Sequence
 
 import pulp
@@ -61,6 +62,8 @@ class ModelBundle:
     energy: dict[int, pulp.LpVariable]        # 索引 0..144（145 个状态边界）
     cost_expr: pulp.LpAffineExpression        # C_buy = Σ c_t·P_grid_t·Δt
     throughput_expr: pulp.LpAffineExpression  # Σ (P_ch_t + P_dis_t)·Δt
+    eta_ch: float = ETA_CH
+    eta_dis: float = ETA_DIS
 
 
 def _check_input(prices: Sequence[float], loads: Sequence[float], pv: Sequence[float]) -> None:
@@ -76,6 +79,8 @@ def build_model(
     *,
     enforce_grid_upper_bound: bool = False,
     name: str = "q1_deterministic_dispatch",
+    eta_ch: float = ETA_CH,
+    eta_dis: float = ETA_DIS,
 ) -> ModelBundle:
     """按 model_spec.md 构建问题 1 确定性 LP。
 
@@ -85,12 +90,16 @@ def build_model(
     loads  : 144 个时段的负载功率 P_load_t（kW）
     pv     : 144 个时段的光伏预测功率 P_PV_t（kW）
     enforce_grid_upper_bound : 是否启用可选约束 C10（默认 False，见 A3 §14）
+    eta_ch, eta_dis : 敏感性场景效率；默认仍为 H3 主假设，不修改全局常量。
 
     返回
     ----
     ModelBundle（prob 已含目标函数与全部约束，可直接求解）
     """
     _check_input(prices, loads, pv)
+    for label, efficiency in (("eta_ch", eta_ch), ("eta_dis", eta_dis)):
+        if not isfinite(efficiency) or not 0 < efficiency <= 1:
+            raise ValueError(f"{label} must be finite and in (0, 1], got {efficiency}")
 
     prob = pulp.LpProblem(name, pulp.LpMinimize)
 
@@ -125,7 +134,7 @@ def build_model(
         # C3 储能电量递推（含 Δt 与效率）
         prob += (
             energy[t]
-            == energy[t - 1] + ETA_CH * p_ch[t] * DELTA_T - (p_dis[t] / ETA_DIS) * DELTA_T,
+            == energy[t - 1] + eta_ch * p_ch[t] * DELTA_T - (p_dis[t] / eta_dis) * DELTA_T,
             f"C3_recursion_{t}",
         )
         # 可选 C10 购电功率平凡上界（默认不启用）
@@ -153,6 +162,8 @@ def build_model(
         energy=energy,
         cost_expr=cost_expr,
         throughput_expr=throughput_expr,
+        eta_ch=eta_ch,
+        eta_dis=eta_dis,
     )
 
 
