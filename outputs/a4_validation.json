@@ -4,7 +4,7 @@
   "repository": "bluesblue320-hue/math-modeling-2026-c",
   "branch": "main",
   "a3_commit": "1407a46b83d4c9d0d93739be0de83bafcc2ac948",
-  "python": "3.13.9",
+  "python": "3.13.14",
   "source_of_truth": [
     "AGENTS.md",
     "docs/problem_spec.md",

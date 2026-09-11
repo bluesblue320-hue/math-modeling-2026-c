@@ -13,7 +13,9 @@ from src import solve_q1
 from src.model_q1 import ETA_CH, ETA_DIS, DELTA_T, build_model
 from src.sensitivity_q1_efficiency import run as run_sensitivity
 from src.export_result1 import (
-    export_result1, validate_workbook, TEMPLATE, SOLUTION, SUMMARY,
+    export_result1, validate_workbook, validate_submission_workbook,
+    validate_corrected_workbook, TEMPLATE, SOLUTION, SUMMARY,
+    OUTPUT_SUBMISSION, OUTPUT_CORRECTED,
 )
 
 
@@ -75,12 +77,17 @@ def test_sensitivity_outputs_and_main_files_preserved(tmp_path):
 
 def test_export_and_template_preservation(tmp_path):
     original = TEMPLATE.read_bytes()
-    path = export_result1(output=tmp_path / "result1.xlsx")
+    corrected, submission = export_result1(
+        submission_output=tmp_path / "result1_submission.xlsx",
+        corrected_output=tmp_path / "result1_corrected_mapping.xlsx",
+    )
     sol = pd.read_csv(SOLUTION)
     summ = json.loads(SUMMARY.read_text())
-    validate_workbook(path, sol, summ)
+    validate_submission_workbook(submission, sol, summ)
+    validate_corrected_workbook(corrected, sol, summ)
+    validate_workbook(corrected, sol, summ)   # backward-compatible alias
     assert TEMPLATE.read_bytes() == original
-    wb, template = openpyxl.load_workbook(path), openpyxl.load_workbook(TEMPLATE)
+    wb, template = openpyxl.load_workbook(corrected), openpyxl.load_workbook(TEMPLATE)
     try:
         assert wb["计划购电量"].max_row == 145
         assert wb["计划购电量"]["A2"].value == "00:00-00:10"
@@ -116,7 +123,10 @@ def test_export_and_template_preservation(tmp_path):
     ("充放电量", "E3", 5999),
 ])
 def test_export_validation_detects_corruption(tmp_path, sheet, cell, value):
-    path = export_result1(output=tmp_path / "result1.xlsx")
+    path, _ = export_result1(
+        submission_output=tmp_path / "result1_submission.xlsx",
+        corrected_output=tmp_path / "result1_corrected_mapping.xlsx",
+    )
     wb = openpyxl.load_workbook(path)
     wb[sheet][cell] = value
     wb.save(path)
@@ -148,14 +158,21 @@ def test_bad_sources_do_not_publish(tmp_path, corruption):
 
 def test_failed_workbook_validation_keeps_previous_valid_output(tmp_path, monkeypatch):
     import src.export_result1 as exporter
-    path = export_result1(output=tmp_path / "result1.xlsx")
-    before = path.read_bytes()
-    def fail(*args):
+    path, sub = export_result1(
+        submission_output=tmp_path / "result1_submission.xlsx",
+        corrected_output=tmp_path / "result1_corrected_mapping.xlsx",
+    )
+    before, sub_before = path.read_bytes(), sub.read_bytes()
+    def fail(*args, **kwargs):
         raise ValueError("injected saved workbook validation failure")
-    monkeypatch.setattr(exporter, "validate_workbook", fail)
+    monkeypatch.setattr(exporter, "validate_corrected_workbook", fail)
     with pytest.raises(ValueError, match="injected"):
-        export_result1(output=path)
+        export_result1(
+            submission_output=tmp_path / "result1_submission.xlsx",
+            corrected_output=tmp_path / "result1_corrected_mapping.xlsx",
+        )
     assert path.read_bytes() == before
+    assert sub.read_bytes() == sub_before
     assert list(tmp_path.glob(".result1-*.xlsx")) == []
 
 

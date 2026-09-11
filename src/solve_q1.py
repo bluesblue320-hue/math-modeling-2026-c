@@ -259,7 +259,19 @@ def crosscheck_with_cbc(prices, loads, pv) -> dict[str, Any]:
 # 2. 变量提取与派生量
 # ==========================================================================
 def _val(v: pulp.LpVariable) -> float:
-    return float(v.value()) if v.value() is not None else 0.0
+    """Fail-fast 读取 Solver 变量值（A3 §17）。
+
+    Solver Status 非 Optimal 时本模块已在上游立即停止；此处再加一道防线：
+    任何变量（或因异常残留）缺少 Solver Value 时**不得**静默当作 0，
+    必须抛出 RuntimeError，避免把无效解当成有效解写出。
+    """
+    value = v.value()
+    if value is None:
+        raise RuntimeError(
+            f"Solver variable {v.name!r} has no value; "
+            "solution extraction is not allowed."
+        )
+    return float(value)
 
 
 def _clamp(v: float) -> float:
