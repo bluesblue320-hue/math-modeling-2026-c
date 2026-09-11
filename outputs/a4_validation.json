@@ -1,0 +1,442 @@
+{
+  "status": "PASS",
+  "auditor": "A4 Independent Validation / Red Team Agent",
+  "repository": "bluesblue320-hue/math-modeling-2026-c",
+  "branch": "main",
+  "a3_commit": "1407a46b83d4c9d0d93739be0de83bafcc2ac948",
+  "python": "3.13.14",
+  "source_of_truth": [
+    "AGENTS.md",
+    "docs/problem_spec.md",
+    "docs/time_mapping_decision.md",
+    "docs/model_spec.md",
+    "docs/data_report.md"
+  ],
+  "independence": {
+    "imports_a3_model": false,
+    "imports_a3_solver": false,
+    "reuses_a3_pulp_model": false,
+    "method": "recomputed from docs/model_spec.md; independent scipy/HiGHS LP rebuild"
+  },
+  "artifact_validation": {
+    "rows": true,
+    "model_t_1_to_144": true,
+    "physical_interval_aligned": true,
+    "anchor_intervals": true,
+    "time_mapping": true,
+    "input_unchanged": true,
+    "kw_to_kwh": true,
+    "interval_cost": true,
+    "power_balance": true,
+    "pv_constraints": true,
+    "curtailment_identity": true,
+    "storage_continuity": true,
+    "initial_energy": true,
+    "storage_recursion": true,
+    "energy_bounds": true,
+    "power_bounds": true,
+    "grid_nonnegative": true,
+    "terminal_energy": true,
+    "objective_recompute": true,
+    "energy_conservation": true,
+    "battery_net_identity": true,
+    "summary_reconciliation": true,
+    "blocks_4h": true,
+    "key_intervals": true,
+    "baseline": true,
+    "a3_xlsx_matches_csv": true,
+    "independent_lp_optimal_match": true
+  },
+  "artifact_validation_pass": true,
+  "a3_objective_yuan": 35126.948589289634,
+  "a4_recomputed_objective_yuan": 35126.948589289634,
+  "a4_recomputed_vs_a3_objective_absdiff_yuan": 0.0,
+  "independent_lp": {
+    "engine": "scipy.optimize.linprog(method='highs')",
+    "n_variables": 721,
+    "n_equality_rows": 290,
+    "status": 0,
+    "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+    "optimal": true,
+    "objective_yuan": 35126.948589289634,
+    "total_grid_energy_kwh": 59482.69899835392,
+    "total_charge_energy_kwh": 20740.66613168725,
+    "total_discharge_energy_kwh": 16799.939566666668,
+    "simultaneous_count": 0
+  },
+  "independent_lp_objective_yuan": 35126.948589289634,
+  "a3_vs_a4_lp_abs_diff_yuan": 0.0,
+  "a3_vs_a4_lp_rel_diff": 0.0,
+  "independent_optimal_match": true,
+  "multiple_optimum_compatible": true,
+  "independent_dispatch_max_abs_diff_kw": {
+    "grid_kw": 2000.0000000000005,
+    "charge_kw": 2000.0,
+    "discharge_kw": 4.547473508864641e-13
+  },
+  "max_power_balance_residual_kw": 9.094947017729282e-13,
+  "max_power_balance_residual_at": {
+    "model_t": 1,
+    "physical_interval": "00:00-00:10",
+    "grid_kw": 8439.8466,
+    "pv_used_kw": 0.0,
+    "discharge_kw": 0.0,
+    "load_kw": 3439.8466,
+    "charge_kw": 5000.0,
+    "residual_kw": 9.094947017729282e-13
+  },
+  "max_storage_continuity_error_kwh": 0.0,
+  "max_storage_continuity_error_at": {
+    "model_t": 1,
+    "physical_interval": "00:00-00:10"
+  },
+  "max_energy_recursion_residual_kwh": 1.8189894035458565e-12,
+  "max_energy_recursion_residual_at": {
+    "model_t": 37,
+    "physical_interval": "06:00-06:10"
+  },
+  "terminal_error_kwh": 0.0,
+  "energy_bounds": {
+    "min_energy_kwh": 1200.0,
+    "max_energy_kwh": 10800.0,
+    "min_energy_boundary_index": 124,
+    "min_energy_at": "E_124 (end of period 124 / start of period 125)",
+    "max_energy_boundary_index": 34,
+    "max_energy_at": "E_34 (end of period 34 / start of period 35)",
+    "lower": 1200.0,
+    "upper": 10800.0
+  },
+  "power_bounds": {
+    "max_charge_kw": 5000.0,
+    "max_discharge_kw": 4293.9182,
+    "max_grid_kw": 8458.8273,
+    "min_grid_kw": 0.0
+  },
+  "simultaneous_count_a3_solution": 0,
+  "simultaneous_model_t": [],
+  "max_simultaneous_min_kw": 0.0,
+  "energy": {
+    "load_kwh": 111024.80809999998,
+    "grid_kwh": 59482.69899835392,
+    "pv_available_kwh": 55482.835666666666,
+    "pv_used_kwh": 55482.835666666666,
+    "pv_curtailed_kwh": 0.0,
+    "charge_kwh": 20740.66613168725,
+    "discharge_kwh": 16799.939566666668,
+    "bus_conservation_residual_kwh": 2.9103830456733704e-11,
+    "pv_balance_residual_kwh": 0.0,
+    "battery_net_change_kwh": 3.637978807091713e-12,
+    "terminal_minus_initial_kwh": 0.0
+  },
+  "baseline_cost_recomputed_yuan": 48052.046590846665,
+  "baseline": {
+    "baseline_cost_recomputed_yuan": 48052.046590846665,
+    "a3_baseline_cost_yuan": 48052.046590846665,
+    "baseline_cost_abs_diff_yuan": 0.0,
+    "baseline_grid_energy_kwh": 61789.9354,
+    "saving_recomputed_yuan": 12925.098001557031,
+    "saving_rate_recomputed": 0.26898121762870153,
+    "a3_saving_yuan": 12925.098001557031,
+    "a3_saving_rate": 0.26898121762870153
+  },
+  "summary_reconciliation": {
+    "objective_cost_yuan": {
+      "a3": 35126.948589289634,
+      "a4": 35126.948589289634,
+      "abs_diff": 0.0
+    },
+    "total_grid_energy_kwh": {
+      "a3": 59482.69899835391,
+      "a4": 59482.69899835392,
+      "abs_diff": 7.275957614183426e-12
+    },
+    "total_charge_energy_kwh": {
+      "a3": 20740.666131687245,
+      "a4": 20740.66613168725,
+      "abs_diff": 3.637978807091713e-12
+    },
+    "total_discharge_energy_kwh": {
+      "a3": 16799.939566666668,
+      "a4": 16799.939566666668,
+      "abs_diff": 0.0
+    },
+    "total_pv_available_kwh": {
+      "a3": 55482.835666666666,
+      "a4": 55482.835666666666,
+      "abs_diff": 0.0
+    },
+    "total_pv_used_kwh": {
+      "a3": 55482.835666666666,
+      "a4": 55482.835666666666,
+      "abs_diff": 0.0
+    },
+    "total_curtailment_kwh": {
+      "a3": 0.0,
+      "a4": 0.0,
+      "abs_diff": 0.0
+    },
+    "initial_energy_kwh": {
+      "a3": 6000.0,
+      "a4": 6000.0,
+      "abs_diff": 0.0
+    },
+    "final_energy_kwh": {
+      "a3": 6000.0,
+      "a4": 6000.0,
+      "abs_diff": 0.0
+    },
+    "min_energy_kwh": {
+      "a3": 1200.0,
+      "a4": 1200.0,
+      "abs_diff": 0.0
+    },
+    "max_energy_kwh": {
+      "a3": 10800.0,
+      "a4": 10800.0,
+      "abs_diff": 0.0
+    },
+    "max_charge_kw": {
+      "a3": 5000.0,
+      "a4": 5000.0,
+      "abs_diff": 0.0
+    },
+    "max_discharge_kw": {
+      "a3": 4293.9182,
+      "a4": 4293.9182,
+      "abs_diff": 0.0
+    },
+    "max_grid_kw": {
+      "a3": 8458.8273,
+      "a4": 8458.8273,
+      "abs_diff": 0.0
+    },
+    "simultaneous_charge_discharge_count": {
+      "a3": 0,
+      "a4": 0.0,
+      "abs_diff": 0.0
+    }
+  },
+  "blocks_4h": [
+    {
+      "block": "00:00-04:00",
+      "model_t": [
+        1,
+        24
+      ],
+      "charge_kwh": {
+        "a3": 4500.0,
+        "a4": 4499.999999999999,
+        "abs_diff": 9.094947017729282e-13
+      },
+      "discharge_kwh": {
+        "a3": 0.0,
+        "a4": 0.0,
+        "abs_diff": 0.0
+      },
+      "grid_kwh": {
+        "a3": 18487.106183333333,
+        "a4": 18487.106183333333,
+        "abs_diff": 0.0
+      }
+    },
+    {
+      "block": "04:00-08:00",
+      "model_t": [
+        25,
+        48
+      ],
+      "charge_kwh": {
+        "a3": 833.3333333333333,
+        "a4": 833.3333333333333,
+        "abs_diff": 0.0
+      },
+      "discharge_kwh": {
+        "a3": 6365.8412,
+        "a4": 6365.8412,
+        "abs_diff": 0.0
+      },
+      "grid_kwh": {
+        "a3": 7302.749566666666,
+        "a4": 7302.749566666666,
+        "abs_diff": 0.0
+      }
+    },
+    {
+      "block": "08:00-12:00",
+      "model_t": [
+        49,
+        72
+      ],
+      "charge_kwh": {
+        "a3": 4787.964288065849,
+        "a4": 4787.964288065848,
+        "abs_diff": 9.094947017729282e-13
+      },
+      "discharge_kwh": {
+        "a3": 1702.9969833333334,
+        "a4": 1702.9969833333332,
+        "abs_diff": 2.2737367544323206e-13
+      },
+      "grid_kwh": {
+        "a3": 1760.9755047325157,
+        "a4": 1760.9755047325154,
+        "abs_diff": 2.2737367544323206e-13
+      }
+    },
+    {
+      "block": "12:00-16:00",
+      "model_t": [
+        73,
+        96
+      ],
+      "charge_kwh": {
+        "a3": 5286.0351769547315,
+        "a4": 5286.035176954732,
+        "abs_diff": 9.094947017729282e-13
+      },
+      "discharge_kwh": {
+        "a3": 91.10138333333344,
+        "a4": 91.10138333333344,
+        "abs_diff": 0.0
+      },
+      "grid_kwh": {
+        "a3": 3809.993860288065,
+        "a4": 3809.993860288065,
+        "abs_diff": 0.0
+      }
+    },
+    {
+      "block": "16:00-20:00",
+      "model_t": [
+        97,
+        120
+      ],
+      "charge_kwh": {
+        "a3": 0.0,
+        "a4": 0.0,
+        "abs_diff": 0.0
+      },
+      "discharge_kwh": {
+        "a3": 5780.131883333333,
+        "a4": 5780.1318833333335,
+        "abs_diff": 9.094947017729282e-13
+      },
+      "grid_kwh": {
+        "a3": 10419.526716666665,
+        "a4": 10419.526716666667,
+        "abs_diff": 1.8189894035458565e-12
+      }
+    },
+    {
+      "block": "20:00-24:00",
+      "model_t": [
+        121,
+        144
+      ],
+      "charge_kwh": {
+        "a3": 5333.333333333333,
+        "a4": 5333.333333333332,
+        "abs_diff": 9.094947017729282e-13
+      },
+      "discharge_kwh": {
+        "a3": 2859.8681166666665,
+        "a4": 2859.8681166666665,
+        "abs_diff": 0.0
+      },
+      "grid_kwh": {
+        "a3": 17702.347166666666,
+        "a4": 17702.347166666666,
+        "abs_diff": 0.0
+      }
+    }
+  ],
+  "key_intervals": [
+    {
+      "model_t": 61,
+      "physical_interval": "10:00-10:10",
+      "expected_interval": "10:00-10:10",
+      "grid_kw": 0.0,
+      "grid_kwh": 0.0,
+      "a3_grid_kwh": 0.0,
+      "grid_kwh_abs_diff": 0.0
+    },
+    {
+      "model_t": 73,
+      "physical_interval": "12:00-12:10",
+      "expected_interval": "12:00-12:10",
+      "grid_kw": 2882.4747,
+      "grid_kwh": 480.4124499999999,
+      "a3_grid_kwh": 480.4124499999999,
+      "grid_kwh_abs_diff": 0.0
+    },
+    {
+      "model_t": 85,
+      "physical_interval": "14:00-14:10",
+      "expected_interval": "14:00-14:10",
+      "grid_kw": 0.0,
+      "grid_kwh": 0.0,
+      "a3_grid_kwh": 0.0,
+      "grid_kwh_abs_diff": 0.0
+    },
+    {
+      "model_t": 97,
+      "physical_interval": "16:00-16:10",
+      "expected_interval": "16:00-16:10",
+      "grid_kw": 2672.5899000000004,
+      "grid_kwh": 445.4316500000001,
+      "a3_grid_kwh": 445.43165000000005,
+      "grid_kwh_abs_diff": 5.684341886080802e-14
+    },
+    {
+      "model_t": 109,
+      "physical_interval": "18:00-18:10",
+      "expected_interval": "18:00-18:10",
+      "grid_kw": 3191.3642999999997,
+      "grid_kwh": 531.8940499999999,
+      "a3_grid_kwh": 531.8940499999999,
+      "grid_kwh_abs_diff": 0.0
+    },
+    {
+      "model_t": 121,
+      "physical_interval": "20:00-20:10",
+      "expected_interval": "20:00-20:10",
+      "grid_kw": 0.0,
+      "grid_kwh": 0.0,
+      "a3_grid_kwh": 0.0,
+      "grid_kwh_abs_diff": 0.0
+    }
+  ],
+  "findings": {
+    "critical": [],
+    "major": [],
+    "minor": [
+      {
+        "id": "M1",
+        "where": "src/solve_q1.py:_val",
+        "issue": "helper `_val` converts a None variable value to 0.0 instead of failing; a silent zero could mask an unset variable. No effect here (solver Optimal, all 721 variables resolved).",
+        "impact": "none on this run"
+      },
+      {
+        "id": "M2",
+        "where": "src/solve_q1.py:run",
+        "issue": "outputs (q1_solution.csv / .xlsx / q1_summary.json) are written BEFORE the final `validation_all_pass` gate raises; a failing solve would still leave formal-looking result files on disk.",
+        "impact": "none on this run (validation_all_pass = True)"
+      },
+      {
+        "id": "M3",
+        "where": "problem 1 LP (inherent)",
+        "issue": "the LP admits multiple optimal dispatches (per-period grid/charge differ from A4's independent optimum by up to ~2000 kW at equal objective). A3's solution is one valid optimum; this is NOT a defect.",
+        "impact": "none"
+      }
+    ]
+  },
+  "generated_files": [
+    "src/audit_q1_independent.py",
+    "tests/test_a4_independent_q1.py",
+    "outputs/a4_validation.json",
+    "docs/a4_validation_report.md",
+    "outputs/a4_independent_solution.csv"
+  ],
+  "ready_for_result_export": true,
+  "independent_solution_csv": "outputs/a4_independent_solution.csv"
+}
