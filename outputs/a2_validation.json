@@ -1,0 +1,176 @@
+{
+  "status": "PASS",
+  "rows": 144,
+  "missing_values": 0,
+  "duplicate_model_t": 0,
+  "duplicate_intervals": 0,
+  "duplicate_source_label": 0,
+  "time_step_minutes": 10,
+  "first_model_t": 1,
+  "last_model_t": 144,
+  "first_interval": "00:00-00:10",
+  "last_interval": "23:50-24:00",
+  "first_source_row": 2,
+  "last_source_row": 145,
+  "first_source_label": "00:10",
+  "last_source_label": "0:00+1",
+  "full_day_covered": true,
+  "mapping": "RIGHT_ENDPOINT",
+  "mapping_decision": "Mapping A (source label = interval end)",
+  "delta_t_hours": 0.16666666666666666,
+  "negative_price_count": 0,
+  "negative_load_count": 0,
+  "negative_pv_count": 0,
+  "statistics": {
+    "price_yuan_per_kwh": {
+      "min": 0.3713,
+      "max": 1.3952,
+      "mean": 0.7661972222222223
+    },
+    "load_kw": {
+      "min": 3309.3934,
+      "max": 5958.9696,
+      "mean": 4626.0336708333325
+    },
+    "pv_kw": {
+      "min": 0.0,
+      "max": 7612.316,
+      "mean": 2311.7848194444446
+    }
+  },
+  "key_mapping_checks": [
+    {
+      "expected": {
+        "model_t": 1,
+        "physical_interval": "00:00-00:10",
+        "source_excel_row": 2,
+        "source_label": "00:10"
+      },
+      "actual": {
+        "physical_interval": "00:00-00:10",
+        "source_excel_row": 2,
+        "source_label": "00:10",
+        "source_minute": 10
+      },
+      "ok": true
+    },
+    {
+      "expected": {
+        "model_t": 61,
+        "physical_interval": "10:00-10:10",
+        "source_excel_row": 62,
+        "source_label": "10:10"
+      },
+      "actual": {
+        "physical_interval": "10:00-10:10",
+        "source_excel_row": 62,
+        "source_label": "10:10",
+        "source_minute": 610
+      },
+      "ok": true
+    },
+    {
+      "expected": {
+        "model_t": 73,
+        "physical_interval": "12:00-12:10",
+        "source_excel_row": 74,
+        "source_label": "12:10"
+      },
+      "actual": {
+        "physical_interval": "12:00-12:10",
+        "source_excel_row": 74,
+        "source_label": "12:10",
+        "source_minute": 730
+      },
+      "ok": true
+    },
+    {
+      "expected": {
+        "model_t": 85,
+        "physical_interval": "14:00-14:10",
+        "source_excel_row": 86,
+        "source_label": "14:10"
+      },
+      "actual": {
+        "physical_interval": "14:00-14:10",
+        "source_excel_row": 86,
+        "source_label": "14:10",
+        "source_minute": 850
+      },
+      "ok": true
+    },
+    {
+      "expected": {
+        "model_t": 97,
+        "physical_interval": "16:00-16:10",
+        "source_excel_row": 98,
+        "source_label": "16:10"
+      },
+      "actual": {
+        "physical_interval": "16:00-16:10",
+        "source_excel_row": 98,
+        "source_label": "16:10",
+        "source_minute": 970
+      },
+      "ok": true
+    },
+    {
+      "expected": {
+        "model_t": 109,
+        "physical_interval": "18:00-18:10",
+        "source_excel_row": 110,
+        "source_label": "18:10"
+      },
+      "actual": {
+        "physical_interval": "18:00-18:10",
+        "source_excel_row": 110,
+        "source_label": "18:10",
+        "source_minute": 1090
+      },
+      "ok": true
+    },
+    {
+      "expected": {
+        "model_t": 121,
+        "physical_interval": "20:00-20:10",
+        "source_excel_row": 122,
+        "source_label": "20:10"
+      },
+      "actual": {
+        "physical_interval": "20:00-20:10",
+        "source_excel_row": 122,
+        "source_label": "20:10",
+        "source_minute": 1210
+      },
+      "ok": true
+    },
+    {
+      "expected": {
+        "model_t": 144,
+        "physical_interval": "23:50-24:00",
+        "source_excel_row": 145,
+        "source_label": "0:00+1"
+      },
+      "actual": {
+        "physical_interval": "23:50-24:00",
+        "source_excel_row": 145,
+        "source_label": "0:00+1",
+        "source_minute": 1440
+      },
+      "ok": true
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "source_file": "C题/附件/附件1.xlsx",
+  "sheet": "Sheet1",
+  "header": [
+    "时间",
+    "电价",
+    "小区负载",
+    "光伏发电预测功率"
+  ],
+  "raw_dimensions": "A1:D145",
+  "raw_max_row": 145,
+  "raw_max_col": 4
+}

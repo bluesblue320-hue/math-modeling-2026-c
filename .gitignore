@@ -1,0 +1,35 @@
+# ============================================================
+# .gitignore — math-modeling-2026-c
+# 目标：只纳入工程与协作文档；排除官方原始题目/附件、缓存与临时文件。
+# 注意：不要写全局 `*.xlsx` 规则，
+#       因为 outputs/ 下的最终结果产物（如 result1.xlsx）可能需要纳入版本管理。
+#       官方 Excel 通过目录规则（C题/附件/ 等）忽略。
+# ============================================================
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# --- Agent / runtime temp ---
+.workbuddy/
+.tmp/
+tmp/
+
+# --- OS / IDE ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Official contest source files (题目与附件不入库) ---
+A题/
+B题/
+C题/附件/
+D题/
+E题/
+
+# --- Raw official documents ---
+*.pdf
